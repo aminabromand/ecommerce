@@ -102,3 +102,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# static cdn files
+static_cdn/
+static_cdn/*
