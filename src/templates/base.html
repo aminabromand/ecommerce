@@ -14,9 +14,12 @@
   <body>
     
     {% include 'base/navbar.html' with brand_name='eCommerce' %}
-    
-    {% block content %}{% endblock %}
 
+    <div class='container'>
+    
+      {% block content %}{% endblock %}
+
+    </div>
 
     {% include 'base/js.html' %}    
 
