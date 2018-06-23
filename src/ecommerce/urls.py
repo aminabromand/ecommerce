@@ -39,6 +39,9 @@ urlpatterns = [
     url(r'^contact/$', contact_page, name='contact'),
     url(r'^login/$', login_page, name='login'),
     url(r'^register/$', register_page, name='register'),
+
+    url(r'^cart/', include("apps.carts.urls", namespace='cart')),
+
     url(r'^bootstrap/$', TemplateView.as_view(template_name='bootstrap/example.html')),
     url(r'^products/', include("products.urls", namespace='products')),
     url(r'^search/', include("search.urls", namespace='search')),
