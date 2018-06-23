@@ -3,12 +3,12 @@ from django.shortcuts import render
 # Create your views here.
 
 def cart_home(request):
-	# print(request.session) # session object
-	# print(dir(request.session)) # class methods and stuff
-	# request.session.set_expiry(300)
-	# key = request.session.session_key
-	# print(key)
-	#
-	request.session['first_name'] = 'Justin'
-	request.session['user'] = request.user.username
+	cart_id = request.session.get('cart_id', None)
+	if cart_id is None: # isinstance(cart_id, int):
+		print('create new cart')
+		request.session['cart_id'] = 12
+		pass
+	else:
+		print('Cart ID exists')
+	
 	return render(request, 'carts/home.html', {})
