@@ -7,13 +7,14 @@ from django.shortcuts import render, redirect
 from .forms import ContactForm, LoginForm, RegisterForm
 
 def home_page(request):
-	context = {
+    print(request.session.get('first_name', 'Unknown'))
+    context = {
 		'title':'Hello World!',
 		'content': 'Welcome to the homepage.',
-	}
-	if request.user.is_authenticated():
+    }
+    if request.user.is_authenticated():
                 context['premium_content'] = 'YEAHHHHHHHH.'
-	return render(request, 'home_page.html', context)
+    return render(request, 'home_page.html', context)
 
 def about_page(request):
 	context = {
