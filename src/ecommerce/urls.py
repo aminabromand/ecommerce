@@ -19,6 +19,7 @@ from django.conf.urls.static import static
 
 from django.conf.urls import url, include
 from django.contrib import admin
+from django.contrib.auth.views import LogoutView
 from django.views.generic import TemplateView
 
 # from products.views import (
@@ -31,13 +32,15 @@ from django.views.generic import TemplateView
 #     ProductFeaturedDetailView,
 #     )
 
-from .views import home_page, about_page, contact_page, login_page, register_page
+from apps.accounts.views import login_page, register_page
+from .views import home_page, about_page, contact_page
 
 urlpatterns = [
     url(r'^$', home_page, name='home'),
     url(r'^about/$', about_page, name='about'),
     url(r'^contact/$', contact_page, name='contact'),
     url(r'^login/$', login_page, name='login'),
+    url(r'^logout/$', LogoutView.as_view(), name='logout'),
     url(r'^register/$', register_page, name='register'),
 
     url(r'^cart/', include("apps.carts.urls", namespace='cart')),
