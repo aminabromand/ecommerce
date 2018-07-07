@@ -68,7 +68,12 @@ def checkout_home(request):
 	# 	pass
 	# 	# raise Exception('no user and no email provided!')
 
+	address_qs = None
 	if billing_profile is not None:
+		if request.user.is_authenticated():
+			address_qs = Address.objects.filter(billing_profile=billing_profile)
+		# shipping_address_qs 	= address_qs.filter(address_type='shipping')
+		# billing_address_qs 		= address_qs.filter(address_type='billing')
 		order_obj, order_obj_created = Order.objects.new_or_get(billing_profile, cart_obj)
 		# order_qs = Order.objects.filter(billing_profile=billing_profile, cart=cart_obj, active=True)
 		# if order_qs.count() == 1:
@@ -99,6 +104,7 @@ def checkout_home(request):
 		'login_form': login_form,
 		'guest_form': guest_form,
 		'address_form': address_form,
+		'address_qs': address_qs,
 		# 'billing_address_form': billing_address_form,
 	}
 	return render(request, 'carts/checkout.html', context)
