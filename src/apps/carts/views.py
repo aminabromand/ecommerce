@@ -39,27 +39,28 @@ def checkout_home(request):
 	order_obj = None
 	if cart_created or cart_obj.products.count() == 0:
 		return redirect('cart:home')
-	user = request.user
-	billing_profile = None
 	login_form = LoginForm()
 	guest_form = GuestForm()
-	guest_email_id = request.session.get('guest_email_id')
 
-	if user.is_authenticated():
-		'''logged in user checkout; remember payment stuff'''
-		if user.email:
-			billing_profile, billing_profile_created = BillingProfile.objects.get_or_create(
-															user=user, email=user.email)
-		else:
-			raise Exception('user has no email!')
-	elif guest_email_id is not None:
-		'''guest user checkout; auto reload payment stuff'''
-		guest_email_obj = GuestEmail.objects.get(id=guest_email_id)
-		billing_profile, billing_profile_created = BillingProfile.objects.get_or_create(
-															email=guest_email_obj.email)
-	else:
-		pass
-		# raise Exception('no user and no email provided!')
+	billing_profile, billing_profile_created = BillingProfile.objects.new_or_get(request)
+	# billing_profile = None
+	# user = request.user
+	# guest_email_id = request.session.get('guest_email_id')
+	# if user.is_authenticated():
+	# 	'''logged in user checkout; remember payment stuff'''
+	# 	if user.email:
+	# 		billing_profile, billing_profile_created = BillingProfile.objects.get_or_create(
+	# 														user=user, email=user.email)
+	# 	else:
+	# 		raise Exception('user has no email!')
+	# elif guest_email_id is not None:
+	# 	'''guest user checkout; auto reload payment stuff'''
+	# 	guest_email_obj = GuestEmail.objects.get(id=guest_email_id)
+	# 	billing_profile, billing_profile_created = BillingProfile.objects.get_or_create(
+	# 														email=guest_email_obj.email)
+	# else:
+	# 	pass
+	# 	# raise Exception('no user and no email provided!')
 
 	if billing_profile is not None:
 		order_obj, order_obj_created = Order.objects.new_or_get(billing_profile, cart_obj)

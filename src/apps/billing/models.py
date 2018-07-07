@@ -2,10 +2,32 @@ from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save
 
+from apps.accounts.models import GuestEmail
 
 User = settings.AUTH_USER_MODEL
 
 # Create your models here.
+
+class BillingProfileManager(models.Manager):
+	def new_or_get(self, request):
+		user = request.user
+		guest_email_id = request.session.get('guest_email_id')
+		created = False
+		obj = None
+		if user.is_authenticated():
+			'''logged in user checkout; remember payment stuff'''
+			if user.email:
+				obj, created = self.model.objects.get_or_create(user=user, email=user.email)
+			else:
+				raise Exception('user has no email!')
+		elif guest_email_id is not None:
+			'''guest user checkout; auto reload payment stuff'''
+			guest_email_obj = GuestEmail.objects.get(id=guest_email_id)
+			obj, created = self.model.objects.get_or_create(email=guest_email_obj.email)
+		else:
+			pass
+			# raise Exception('no user and no email provided!')
+		return obj, created
 
 # abc@blub.com -->> 100000 billing profiles
 # user abc@blub.com -->> 1 blling profile (all others have to be invalid)
@@ -20,6 +42,7 @@ class BillingProfile(models.Model):
 	def __str__(self):
 		return self.email
 
+	objects = BillingProfileManager()
 
 # def billing_profile_created_receiver(sender, instance, created, *args, **kwargs):
 # 	if created:
