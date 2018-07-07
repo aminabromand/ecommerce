@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 
 from apps.addresses.forms import AddressForm
+from apps.addresses.models import Address
 from apps.accounts.forms import LoginForm, GuestForm
 from apps.accounts.models import GuestEmail
 from apps.billing.models import BillingProfile
@@ -43,6 +44,8 @@ def checkout_home(request):
 	login_form = LoginForm()
 	guest_form = GuestForm()
 	address_form = AddressForm()
+	billing_address_id = request.session.get('billing_address_id', None)
+	shipping_address_id = request.session.get('shipping_address_id', None)
 	# billing_address_form = AddressForm()
 
 	billing_profile, billing_profile_created = BillingProfile.objects.new_or_get(request)
@@ -72,6 +75,14 @@ def checkout_home(request):
 		# 	order_obj = order_qs.first()
 		# else:
 		# 	order_obj = Order.objects.create(billing_profile=billing_profile, cart=cart_obj)
+		if shipping_address_id:
+			order_obj.shipping_address = Address.objects.get(id=shipping_address_id)
+			del request.session['shipping_address_id']
+		if billing_address_id:
+			order_obj.billing_address = Address.objects.get(id=billing_address_id)
+			del request.session['billing_address_id']
+		if billing_address_id or shipping_address_id:
+			order_obj.save()
 
 	context = {
 		'object': order_obj,
