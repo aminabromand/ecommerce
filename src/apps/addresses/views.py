@@ -42,13 +42,13 @@ def checkout_address_reuse_view(request):
 		redirect_path = next_ or next_post or None
 		if request.method == 'POST':
 			print(request.POST)
-			shipping_address_id = request.POST.get('shipping_address_id', None)
+			address_id = request.POST.get('address_id', None)
 			billing_profile, billing_profile_created = BillingProfile.objects.new_or_get(request)
 			address_type = request.POST.get('address_type', 'shipping')
-			if shipping_address_id is not None:
-				qs = Address.objects.filter(billing_profile=billing_profile, id=shipping_address_id)
+			if address_id is not None:
+				qs = Address.objects.filter(billing_profile=billing_profile, id=address_id)
 				if qs.exists():
-					request.session[address_type + '_address_id'] = shipping_address_id
+					request.session[address_type + '_address_id'] = address_id
 			if is_safe_url(redirect_path, request.get_host()):
 				return redirect(redirect_path)
 	return redirect('cart:checkout')
