@@ -55,7 +55,7 @@
               navbarCount.text(data.cart_item_count);
               var currentPath = window.location.href;
               if (currentPath.indexOf("cart") != -1) {
-                refreshCart();
+                refreshCart(data.removed, data.cart_product_id);
               }
             },
             error: function(errorData) {
@@ -65,13 +65,19 @@
 
         });
 
-        function refreshCart() {
+        function refreshCart(removed, cart_product_id) {
           console.log("in current cart");
           var cartTable = $(".cart-table");
           var cartTableBody = cartTable.find(".cart-table-body");
           //cartTableBody.html("<h1>Changed</h1>")
           var cartProducts = cartTableBody.find(".cart-product");
           var currentUrl = window.location.href;
+
+          if (removed) {
+            var cartProductToRemoveClass = ".cart-product-id-" + cart_product_id;
+            var cartProductToRemove = cartTableBody.find(cartProductToRemoveClass);
+            cartProductToRemove.remove();
+          }
 
           var refreshCartUrl = '/api/cart/';
           var refreshCartMethod = "GET";
@@ -86,16 +92,16 @@
               var hiddenCartItemRemoveForm = $(".cart-item-remove-form");
               if (data.products.length > 0) {
                 //cartProducts.html("<tr><td colspan=3>Coming Soon</td></tr>");
-                cartProducts.remove();
-                i = data.products.length;
-                $.each(data.products, function(index, value) {
-                  var newCartItemRemove = hiddenCartItemRemoveForm.clone();
-                  newCartItemRemove.css("display", "block");
-                  // newCartItemRemove.removeClass("hiden-class");
-                  newCartItemRemove.find(".cart-item-product-id").val(value.id);
-                  cartTableBody.prepend("<tr><th scope=\"row\">" + i + "</th><td><a href='" + value.url + "'>" + value.name + "</a>" + newCartItemRemove.html() + "</td><td>" + value.price + "</td></tr>");
-                  i--;
-                });
+                // cartProducts.remove();
+                // i = data.products.length;
+                // $.each(data.products, function(index, value) {
+                //   var newCartItemRemove = hiddenCartItemRemoveForm.clone();
+                //   newCartItemRemove.css("display", "block");
+                //   // newCartItemRemove.removeClass("hiden-class");
+                //   newCartItemRemove.find(".cart-item-product-id").val(value.id);
+                //   cartTableBody.prepend("<tr><th scope=\"row\">" + i + "</th><td><a href='" + value.url + "'>" + value.name + "</a>" + newCartItemRemove.html() + "</td><td>" + value.price + "</td></tr>");
+                //   i--;
+                // });
                 cartTableBody.find(".cart-subtotal").text(data.subtotal);
                 cartTableBody.find(".cart-total").text(data.total);
               } else {

@@ -16,7 +16,7 @@
   <tbody class='cart-table-body'>
 
   	{% for product in cart.products.all %}
-      <tr class='cart-product'>
+      <tr class='cart-product cart-product-id-{{ product.id }}'>
         <th scope="row">{{ forloop.counter }}</th>
         <td>
         	<a href='{{ product.get_absolute_url }}'>{{ product.title }}</a> 
