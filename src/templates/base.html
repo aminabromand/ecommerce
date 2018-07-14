@@ -34,7 +34,8 @@
           var httpMethod;
           var formData;
 
-          actionEndpoint = thisForm.attr("action");
+          // actionEndpoint = thisForm.attr("action"); // API Endpoint
+          actionEndpoint = thisForm.attr("data-endpoint");
           httpMethod = thisForm.attr("method");
           formData = thisForm.serialize();
           console.log(actionEndpoint, httpMethod);
@@ -51,7 +52,11 @@
                 submitSpan.html("<button class='btn btn-success'>Add to cart</button>");
               }
               var navbarCount = $(".navbar-cart-count");
-              navbarCount.text(data.cart_item_count)
+              navbarCount.text(data.cart_item_count);
+              var currentPath = window.location.href;
+              if (currentPath.indexOf("cart") != -1) {
+                refreshCart();
+              }
             },
             error: function(errorData) {
               console.log("ajax error: ", errorData);
@@ -59,6 +64,39 @@
           });
 
         });
+
+        function refreshCart() {
+          console.log("in current cart");
+          var cartTable = $(".cart-table");
+          var cartTableBody = cartTable.find(".cart-table-body");
+          //cartTableBody.html("<h1>Changed</h1>")
+          var cartProducts = cartTableBody.find(".cart-products");
+          var currentUrl = window.location.href;
+
+          var refreshCartUrl = '/api/cart/';
+          var refreshCartMethod = "GET";
+          var data = {};
+          $.ajax({
+            url: refreshCartUrl,
+            method: refreshCartMethod,
+            data: data,
+            success: function(data) {
+              console.log("success");
+              console.log(data);
+              if (data.products.length > 0) {
+                cartProducts.html("<tr><td colspan=3>Coming Soon</td></tr>");
+                cartTableBody.find(".cart-subtotal").text(data.subtotal);
+                cartTableBody.find(".cart-total").text(data.total);
+              } else {
+                window.location.href = currentUrl;
+              }
+            },
+            error: function(errorData) {
+              console.log("error");
+              console.log(errorData);
+            }
+          });
+        }
       });
     </script>
 

@@ -4,7 +4,7 @@
 <h1>Cart</h1>
 
 {% if cart.products.exists %}
-<table class="table">
+<table class="table cart-table">
   <thead>
     <tr>
       <th scope="col">#</th>
@@ -13,26 +13,28 @@
 
     </tr>
   </thead>
-  <tbody>
+  <tbody class='cart-table-body'>
 
-  	{% for product in cart.products.all %}
-    <tr>
-      <th scope="row">{{ forloop.counter }}</th>
-      <td>
-      	<a href='{{ product.get_absolute_url }}'>{{ product.title }}</a> 
-      	{% include 'products/snippets/update-cart.html' with product=product cart=cart in_cart=True %}
-      </td>
-      <td>{{ product.price }}</td>
-    </tr>
-    {% endfor %}
+    <div class='cart-products'>
+    	{% for product in cart.products.all %}
+      <tr>
+        <th scope="row">{{ forloop.counter }}</th>
+        <td>
+        	<a href='{{ product.get_absolute_url }}'>{{ product.title }}</a> 
+        	{% include 'products/snippets/update-cart.html' with product=product cart=cart in_cart=True %}
+        </td>
+        <td>&#36; {{ product.price }}</td>
+      </tr>
+      {% endfor %}
+    </div>
 
     <tr>
       <td colspan=2></td>
-      <td><b>Subtotal</b> {{ cart.subtotal }}</td>
+      <td><b>Subtotal</b> &#36;<span class='cart-subtotal'> {{ cart.subtotal }} </span></td>
     </tr>
     <tr>
       <td colspan=2></td>
-      <td><b>Total</b> {{ cart.total }}</td>
+      <td><b>Total</b> &#36;<span class='cart-total'> {{ cart.total }} </span></td>
     </tr>
     <tr>
       <td colspan=2></td>
