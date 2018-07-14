@@ -50,6 +50,8 @@
               } else {
                 submitSpan.html("<button class='btn btn-success'>Add to cart</button>");
               }
+              var navbarCount = $(".navbar-cart-count");
+              navbarCount.text(data.cart_item_count)
             },
             error: function(errorData) {
               console.log("ajax error: ", errorData);
