@@ -21,7 +21,39 @@
 
     </div>
 
-    {% include 'base/js.html' %}    
+    {% include 'base/js.html' %}
+
+    <script>
+      $(document).ready(function() {
+        var productForm = $(".form-product-ajax"); // #form-product-ajax
+        productForm.submit(function(event) {
+          event.preventDefault();
+          console.log("Form is not sending");
+          var thisForm = $(this)
+          var actionEndpoint;
+          var httpMethod;
+          var formData;
+
+          actionEndpoint = thisForm.attr("action");
+          httpMethod = thisForm.attr("method");
+          formData = thisForm.serialize();
+          console.log(actionEndpoint, httpMethod);
+
+          $.ajax({
+            url: actionEndpoint,
+            method: httpMethod,
+            data: formData,
+            success: function(data) {
+              console.log("ajax success: ", data);
+            },
+            error: function(errorData) {
+              console.log("ajax error: ", errorData);
+            }
+          });
+
+        });
+      });
+    </script>
 
   </body>
 </html>
