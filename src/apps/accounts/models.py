@@ -47,7 +47,7 @@ class User(AbstractBaseUser):
 	active 		= models.BooleanField(default=True)
 	staff		= models.BooleanField(default=False)
 	admin		= models.BooleanField(default=False)
-	timestamp 	= models.DatTimeField(auto_now_add=True)
+	timestamp 	= models.DateTimeField(auto_now_add=True)
 	# confirm 	= models.BooleanField(default=False)
 	# confirmed_date = models.DateTimeField()
 
