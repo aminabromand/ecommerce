@@ -99,6 +99,10 @@
               }
             },
             error: function(errorData) {
+              $.alert({
+                title: "Oops!",
+                content: "An error occurred.",
+                theme: "modern"});
               console.log("ajax error: ", errorData);
             }
           });
@@ -149,6 +153,10 @@
               }
             },
             error: function(errorData) {
+              $.alert({
+                title: "Oops!",
+                content: "An error occurred.",
+                theme: "modern"});
               console.log("error");
               console.log(errorData);
             }
