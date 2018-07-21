@@ -52,6 +52,9 @@ INSTALLED_APPS = [
 
 AUTH_USER_MODEL = 'accounts.User' # changes the built-in user model to the custom one
 
+FORCE_SESSION_TO_ONE = False
+FORCE_INACTIVE_USER_ENDSESSION = True
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
