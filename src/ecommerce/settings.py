@@ -47,9 +47,13 @@ INSTALLED_APPS = [
     'apps.accounts',
     'apps.billing',
     'apps.addresses',
+    'apps.analytics',
 ]
 
 AUTH_USER_MODEL = 'accounts.User' # changes the built-in user model to the custom one
+
+FORCE_SESSION_TO_ONE = False
+FORCE_INACTIVE_USER_ENDSESSION = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
