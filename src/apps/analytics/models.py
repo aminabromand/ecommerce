@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sessions.models import Session
@@ -14,7 +15,8 @@ from .utils import get_client_ip
 FORCE_SESSION_TO_ONE = getattr(settings, 'FORCE_SESSION_TO_ONE', False)
 FORCE_INACTIVE_USER_ENDSESSION = getattr(settings, 'FORCE_INACTIVE_USER_ENDSESSION', False)
 
-User = settings.AUTH_USER_MODEL
+# User = settings.AUTH_USER_MODEL
+User = get_user_model()
 
 
 class ObjectViewed(models.Model):
@@ -36,8 +38,11 @@ class ObjectViewed(models.Model):
 
 def object_viewed_receiver(sender, instance, request, *args, **kwargs):
 	c_type = ContentType.objects.get_for_model(sender) # instance.__class__
+	user = request.user
+	if not isinstance(user, User):  # <-- added this line
+		user = None					# <-- added this line
 	new_view_obj = ObjectViewed.objects.create(
-											user = request.user,
+											user = user,
 											content_type = c_type,
 											object_id = instance.id,
 											ip_address = get_client_ip(request))
