@@ -36,7 +36,7 @@ from apps.accounts.views import guest_register_view # login_page, register_page
 from apps.accounts.views import RegisterView, LoginView
 from apps.addresses.views import checkout_address_create_view, checkout_address_reuse_view
 from apps.carts.views import cart_detail_api_view
-from apps.billing.views import payment_method_view
+from apps.billing.views import payment_method_view, payment_method_createview
 from .views import home_page, about_page, contact_page
 
 urlpatterns = [
@@ -55,6 +55,7 @@ urlpatterns = [
     url(r'^register/$', RegisterView.as_view(), name='register'),
 
     url(r'^billing/payment-method/$', payment_method_view, name='billing-payment-method'),
+    url(r'^billing/payment-method/create/$', payment_method_createview, name='billing-payment-method-endpoint'),
 
     url(r'^api/cart/', cart_detail_api_view, name='api-cart'),
     url(r'^cart/', include("apps.carts.urls", namespace='cart')),
