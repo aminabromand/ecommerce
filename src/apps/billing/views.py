@@ -42,5 +42,5 @@ def payment_method_createview(request):
 			# new_card_obj = Card.objects.add_new(billing_profile, card_response)
 			new_card_obj = Card.objects.add_new(billing_profile, token)
 			print(new_card_obj) # start saving our cards too!
-		return JsonResponse({'message': 'Success! Your card was added.'})
+		return JsonResponse({'message': 'Your card was added.'})
 	return HttpResponse('error', status_code=401)
