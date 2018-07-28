@@ -1,10 +1,12 @@
 from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save, pre_save
+from django.core.urlresolvers import reverse
 
 import stripe
-
-stripe.api_key = 'sk_test_o4XI58CtPtGfa8SfvrU2tr04'
+STRIPE_SECRET_KEY = getattr(settings, 'STRIPE_SECRET_KEY', 'sk_test_o4XI58CtPtGfa8SfvrU2tr04')
+STRIPE_PUB_KEY = getattr(settings, 'STRIPE_PUB_KEY', 'pk_test_pBdBgd2GUxEfz7tmxuewrTgZ')
+stripe.api_key = STRIPE_SECRET_KEY
 
 from apps.accounts.models import GuestEmail
 
@@ -53,6 +55,9 @@ class BillingProfile(models.Model):
 
 	def get_cards(self):
 		return self.card_set.all()
+
+	def get_payment_method_url(self):
+		return reverse('billing-payment-method')
 
 	@property
 	def has_card(self): # instance.has_card
@@ -128,14 +133,24 @@ class Card(models.Model):
 	objects = CardManager()
 
 	def __str__(self):
-		return "{} {}".format(self.brand, self.last4)
+		return "{} *{}".format(self.brand, self.last4)
+
+
+def new_card_post_save_receiver(sender, instance, created, *args, **kwargs):
+	if instance.default:
+		billing_profile = instance.billing_profile
+		qs = Card.objects.filter(billing_profile=billing_profile).exclude(pk=instance.pk)
+		qs.update(default=False)
+
+
+post_save.connect(new_card_post_save_receiver, sender=Card)
 
 
 class ChargeManager(models.Manager):
 	def do(self, billing_profile, order_obj, card=None): # Charge.objects.do()
 		card_obj = card
 		if card_obj is None:
-			cards = billing_profile.card_set.filter(default=True) # reverse relationship of card_obj.billing_profile
+			cards = billing_profile.get_cards().filter(default=True) # reverse relationship of card_obj.billing_profile
 			if cards.exists():
 				card_obj = cards.first()
 		if card_obj is None:
@@ -171,6 +186,7 @@ class ChargeManager(models.Manager):
 					)
 		new_charge_obj.save()
 		return new_charge_obj.paid, new_charge_obj.seller_message
+
 
 class Charge(models.Model):
 	billing_profile 		= models.ForeignKey(BillingProfile)
