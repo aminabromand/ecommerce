@@ -123,12 +123,17 @@ def checkout_home(request):
 
 	if request.method == 'POST':
 		# check that order is done
-		is_done = order_obj.check_done()
-		if is_done:
-			order_obj.mark_paid()
-			request.session['cart_items'] = 0
-			del request.session['cart_id']
-			return redirect('cart:success')
+		is_prepared = order_obj.check_done()
+		if is_prepared:
+			is_charged, crg_msg = billing_profile.charge(order_obj)
+			if is_charged:
+				order_obj.mark_paid()
+				request.session['cart_items'] = 0
+				del request.session['cart_id']
+				return redirect('cart:success')
+			else:
+				print(crg_msg)
+				return redirect('cart:checkout')
 
 	context = {
 		'object': order_obj,
