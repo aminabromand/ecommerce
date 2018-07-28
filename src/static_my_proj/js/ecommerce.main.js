@@ -103,7 +103,9 @@ $(document).ready(function() {
 				success: function(data){
 					var successMsg = data.message || "Success.";
 					card.clear();
-					successMsg = successMsg + "<br/><br/><i class='fa fa-spin fa-spinner'></i>Redirecting..."
+					if (nextUrl != '') {
+						successMsg = successMsg + "<br/><br/><i class='fa fa-spin fa-spinner'></i>Redirecting..."
+					}
 					if ($.alert){
 						$.alert(successMsg);
 					} else {
