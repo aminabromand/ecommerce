@@ -35,8 +35,9 @@ from django.views.generic import TemplateView
 from apps.accounts.views import guest_register_view # login_page, register_page
 from apps.accounts.views import RegisterView, LoginView
 from apps.addresses.views import checkout_address_create_view, checkout_address_reuse_view
-from apps.carts.views import cart_detail_api_view
 from apps.billing.views import payment_method_view, payment_method_createview
+from apps.carts.views import cart_detail_api_view
+from apps.marketing.views import MarketingPreferenceUpdateView
 from .views import home_page, about_page, contact_page
 
 urlpatterns = [
@@ -70,6 +71,7 @@ urlpatterns = [
     # #url(r'^products/(?P<pk>\d+)/$', ProductDetailView.as_view()),
     # url(r'^products/(?P<slug>[\w-]+)/$', ProductDetailSlugView.as_view()),
     # url(r'^products-fbv/(?P<pk>\d+)/$', product_detail_view),
+    url(r'^settings/email/$', MarketingPreferenceUpdateView.as_view(), name='marketing-pref'),
     url(r'^admin/', admin.site.urls),
 ]
 
