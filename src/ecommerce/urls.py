@@ -37,7 +37,7 @@ from apps.accounts.views import RegisterView, LoginView
 from apps.addresses.views import checkout_address_create_view, checkout_address_reuse_view
 from apps.billing.views import payment_method_view, payment_method_createview
 from apps.carts.views import cart_detail_api_view
-from apps.marketing.views import MarketingPreferenceUpdateView
+from apps.marketing.views import MarketingPreferenceUpdateView, MailchimpWebhookView
 from .views import home_page, about_page, contact_page
 
 urlpatterns = [
@@ -72,6 +72,7 @@ urlpatterns = [
     # url(r'^products/(?P<slug>[\w-]+)/$', ProductDetailSlugView.as_view()),
     # url(r'^products-fbv/(?P<pk>\d+)/$', product_detail_view),
     url(r'^settings/email/$', MarketingPreferenceUpdateView.as_view(), name='marketing-pref'),
+    url(r'^webhooks/mailchimp/$', MailchimpWebhookView.as_view(), name='webhooks-mailchimp'),
     url(r'^admin/', admin.site.urls),
 ]
 
