@@ -4,6 +4,7 @@ from .production import *
 
 try:
     from .local import *
+    pass
 except:
     pass
 
