@@ -1,3 +1,11 @@
+.DS_STORE
+
+# Virtualenv related
+bin/
+include/
+pip-selfcheck.json
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -55,6 +63,9 @@ coverage.xml
 *.log
 local_settings.py
 db.sqlite3
+local_amin.py
+local.py
+production.py
 
 # Flask stuff:
 instance/
