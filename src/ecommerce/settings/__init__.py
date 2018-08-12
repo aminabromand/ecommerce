@@ -1,11 +1,15 @@
+# import sys
+
 from .base import *
 
 from .production import *
 
 try:
     from .local import *
-    pass
+    print("hallo")
 except:
+    # e = sys.exc_info()
+    # print(e)
     pass
 
 try:
