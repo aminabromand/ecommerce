@@ -14,4 +14,4 @@ The live project can be found at [This Link](https://amins-ecommerce.herokuapp.c
 
 > Please be patient during load as the service needs to start on initial requests
 
-:8|::+1:
+:sunglasses::+1:
