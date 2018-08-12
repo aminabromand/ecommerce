@@ -20,7 +20,7 @@ from django.conf.urls.static import static
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, RedirectView
 
 # from products.views import (
 #     ProductListView,
@@ -47,13 +47,15 @@ urlpatterns = [
     
     url(r'^checkout/address/create/$', checkout_address_create_view, name='checkout_address_create'),
     url(r'^checkout/address/reuse/$', checkout_address_reuse_view, name='checkout_address_reuse'),
-    url(r'^register/guest/$', guest_register_view, name='guest_register'),
     url(r'^logout/$', LogoutView.as_view(), name='logout'),
 
     # url(r'^login/$', login_page, name='login'),
     url(r'^login/$', LoginView.as_view(), name='login'),
     # url(r'^register/$', register_page, name='register'),
     url(r'^register/$', RegisterView.as_view(), name='register'),
+    url(r'^register/guest/$', guest_register_view, name='guest_register'),
+    url(r'^accounts/', include("apps.accounts.urls", namespace='accounts')),
+    url(r'^accounts/log_me_in/', RedirectView.as_view(url='/login')),
 
     url(r'^billing/payment-method/$', payment_method_view, name='billing-payment-method'),
     url(r'^billing/payment-method/create/$', payment_method_createview, name='billing-payment-method-endpoint'),
