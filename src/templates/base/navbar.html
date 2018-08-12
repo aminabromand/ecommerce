@@ -36,7 +36,9 @@
 	        </a>
 	        <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdown">
 	          <a class="dropdown-item {% if request.path == account_url %}active{% endif %}" href="{{ account_url }}">Home</a>
-	          <a class="dropdown-item {% if request.path == about_url %}active{% endif %}" href="{{ about_url }}">About</a>
+	          <a class="dropdown-item {% if request.path == about_url %}active{% endif %}" href="{{ about_url }}">Billing</a>
+	          <a class="dropdown-item {% if request.path == about_url %}active{% endif %}" href="{{ about_url }}">Settings</a>
+	          <a class="dropdown-item {% if request.path == about_url %}active{% endif %}" href="{{ about_url }}">History</a>
 	          <div class="dropdown-divider"></div>
 	           <a class="dropdown-item" href="{{ logout_url }}">Logout</a>
 	        </div>
