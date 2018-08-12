@@ -54,8 +54,8 @@ urlpatterns = [
     # url(r'^register/$', register_page, name='register'),
     url(r'^register/$', RegisterView.as_view(), name='register'),
     url(r'^register/guest/$', guest_register_view, name='guest_register'),
-    url(r'^accounts/', include("apps.accounts.urls", namespace='accounts')),
-    url(r'^accounts/log_me_in/', RedirectView.as_view(url='/login')),
+    url(r'^account/', include("apps.accounts.urls", namespace='account')),
+    url(r'^accounts/', RedirectView.as_view(url='/account')),
 
     url(r'^billing/payment-method/$', payment_method_view, name='billing-payment-method'),
     url(r'^billing/payment-method/create/$', payment_method_createview, name='billing-payment-method-endpoint'),
@@ -66,6 +66,7 @@ urlpatterns = [
     url(r'^bootstrap/$', TemplateView.as_view(template_name='bootstrap/example.html')),
     url(r'^products/', include("products.urls", namespace='products')),
     url(r'^search/', include("search.urls", namespace='search')),
+
     # url(r'^featured/$', ProductFeaturedListView.as_view()),
     # url(r'^featured/(?P<pk>\d+)/$', ProductFeaturedDetailView.as_view()),
     # url(r'^products/$', ProductListView.as_view()),
@@ -73,6 +74,8 @@ urlpatterns = [
     # #url(r'^products/(?P<pk>\d+)/$', ProductDetailView.as_view()),
     # url(r'^products/(?P<slug>[\w-]+)/$', ProductDetailSlugView.as_view()),
     # url(r'^products-fbv/(?P<pk>\d+)/$', product_detail_view),
+
+    url(r'^settings/', RedirectView.as_view(url='/account')),
     url(r'^settings/email/$', MarketingPreferenceUpdateView.as_view(), name='marketing-pref'),
     url(r'^webhooks/mailchimp/$', MailchimpWebhookView.as_view(), name='webhooks-mailchimp'),
     url(r'^admin/', admin.site.urls),
