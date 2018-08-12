@@ -6,7 +6,6 @@ from .production import *
 
 try:
     from .local import *
-    print("hallo")
 except:
     # e = sys.exc_info()
     # print(e)
