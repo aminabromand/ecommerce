@@ -14,8 +14,10 @@
 			<div class="card-body">
 				<h5 class="card-title">Support</h5>
 				<p class="card-text">
-					- About
-					- Contact
+					<div class="list-group">
+						<a class="list-group-item" href="{% url 'about' %}">About</a>
+						<a class="list-group-item" href="{% url 'contact' %}">Contact</a>
+					</div>
 				</p>
 			</div>
 		</div>
@@ -26,9 +28,11 @@
 			<div class="card-body">
 				<h5 class="card-title">Billing</h5>
 				<p class="card-text">
-					- Addresses
-					- Payment Method
-					- Orders
+					<div class="list-group">
+						<a class="list-group-item" href="#">Orders</a>
+						<a class="list-group-item" href="{% url 'billing-payment-method' %}">Payment Methods</a>
+						<a class="list-group-item" href="#">Addresses</a>
+					</div>
 				</p>
 			</div>
 		</div>
@@ -39,10 +43,9 @@
 			<div class="card-body">
 				<h5 class="card-title">Settings</h5>
 				<p class="card-text">
-					- Name
-					- Email ? # Big maybe
-					- Password Reset
-					- Email Marketing Preference
+					<a class="list-group-item" href="#">Name</a>
+					<a class="list-group-item" href="#">Password Reset</a>
+					<a class="list-group-item" href="{% url 'marketing-pref' %}">Email Marketing Preference</a>
 				</p>
 			</div>
 		</div>
@@ -54,7 +57,7 @@
 			<div class="card-body">
 				<h5 class="card-title">History</h5>
 				<p class="card-text">
-					- Products Viewed
+					<a class="list-group-item" href="#">Products Viewed</a>
 				</p>
 			</div>
 		</div>
