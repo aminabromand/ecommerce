@@ -22,12 +22,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'ss+83nb@ndmo!2bt_0s)vh8u9$*u$0^r$b1raqf*xvf9zlsikn'
 
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'myemail@gmail.com'
+EMAIL_HOST = 'smtp.gmail.com'  # sendgrid
+EMAIL_HOST_USER = 'myemail@gmail.com' # sendgrid
 EMAIL_HOST_PASSWORD = 'yourpassword'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'amins ecommerce <myemail@gmail.com>'
+BASE_URL = '127.0.0.1:8000'
 
 MANAGERS = (
     ('martin manager', 'yourmanageremail@gmail.com'),

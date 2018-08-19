@@ -5,6 +5,9 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 User = get_user_model()
 
 
+from .models import EmailActivation
+
+
 class UserAdminCreationForm(forms.ModelForm):
     """A form for creating new users. Includes all the required
     fields, plus a repeated password."""
@@ -41,7 +44,7 @@ class UserAdminChangeForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('email', 'full_name', 'password', 'active', 'admin')
+        fields = ('email', 'full_name', 'password', 'is_active', 'admin')
 
     def clean_password(self):
         # Regardless of what the user provides, return the initial value.
@@ -84,7 +87,9 @@ class RegisterForm(forms.ModelForm):
         # Save the provided password in hashed format
         user = super(RegisterForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password1"])
-        # user.active = False # send confirmation email
+        user.is_active = False # send confirmation email via signals
+        # obj = EmailActivation.objects.create(user=user)
+        # obj.send_activation()
         if commit:
             user.save()
         return user

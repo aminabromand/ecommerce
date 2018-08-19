@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 # from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, FormView, DetailView
 from django.shortcuts import render, redirect
@@ -64,6 +65,9 @@ class LoginView(FormView):
                 # print(user)
                 # print('2.: user logged in: ' + str(request.user.is_authenticated()))
                 if user is not None:
+                        if not user.is_active:
+                                messages.error(request, "This user is inactive")
+                                return super(LoginView, self).form_invalid(form)
                         # print('3.: user logged in: ' + str(request.user.is_authenticated()))
                         login(request, user)
                         user_logged_in.send(user.__class__, instance=user, request=request)
