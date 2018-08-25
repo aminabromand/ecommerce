@@ -43,8 +43,8 @@
 			<div class="card-body">
 				<h5 class="card-title">Settings</h5>
 				<p class="card-text">
-					<a class="list-group-item" href="#">Name</a>
-					<a class="list-group-item" href="#">Password Reset</a>
+					<a class="list-group-item" href="{% url 'account:user-update' %}">Update Details</a>
+					<a class="list-group-item" href="{% url 'password_change' %}">Change Password</a>
 					<a class="list-group-item" href="{% url 'marketing-pref' %}">Email Marketing Preference</a>
 				</p>
 			</div>
