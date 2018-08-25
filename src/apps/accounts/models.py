@@ -2,6 +2,7 @@ from datetime import timedelta
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import pre_save, post_save
 from django.contrib.auth.models import (
 	AbstractBaseUser, BaseUserManager
@@ -102,10 +103,10 @@ class User(AbstractBaseUser):
 
 class EmailActivationQuerySet(models.query.QuerySet): # EmailActiation.objects.all().confirmable()
 	def confirmable(self):
-		DEFAULT_ACTIVATION_DAYS
+		# DEFAULT_ACTIVATION_DAYS
 		now = timezone.now()
 		start_range = now - timedelta(days=DEFAULT_ACTIVATION_DAYS)
-		# does my object have a tim
+		# does my object have a timestamp here
 		end_range = now
 		return self.filter(
 						activated = False,
@@ -122,6 +123,9 @@ class EmailActivationManager(models.Manager):
 
 	def confirmable(self):
 		return self.get_queryset().confirmable()
+
+	def email_exists(self, email):
+		return self.get_queryset().filter(Q(email=email) | Q(user__email=email)).filter(activated=False)
 
 
 class EmailActivation(models.Model):

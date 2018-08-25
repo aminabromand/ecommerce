@@ -87,7 +87,7 @@ if FORCE_SESSION_TO_ONE:
 def post_save_user_changed_receiver(sender, instance, created, *args, **kwargs):
 	if not created:
 		if instance.is_active == False:
-			qs = UserSession.objects.filter(user=instance.user, ended=False, active=False)
+			qs = UserSession.objects.filter(user=instance, ended=False, active=False)
 			for i in qs:
 				i.end_session()
 
