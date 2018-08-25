@@ -65,6 +65,7 @@ urlpatterns = [
     url(r'^cart/', include("apps.carts.urls", namespace='cart')),
 
     url(r'^bootstrap/$', TemplateView.as_view(template_name='bootstrap/example.html')),
+    url(r'^orders/', include("apps.orders.urls", namespace='orders')),
     url(r'^products/', include("products.urls", namespace='products')),
     url(r'^search/', include("search.urls", namespace='search')),
 
