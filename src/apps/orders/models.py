@@ -1,11 +1,14 @@
 import math
 from django.db import models
 from django.db.models.signals import pre_save, post_save
+from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
-from ecommerce.utils import unique_order_id_generator
+
 from apps.addresses.models import Address
 from apps.billing.models import BillingProfile
 from apps.carts.models import Cart
+from ecommerce.utils import unique_order_id_generator
+from products.models import Product
 
 
 ORDER_STATUS_CHOICES = (
@@ -14,6 +17,8 @@ ORDER_STATUS_CHOICES = (
 	('shipped', 'Shipped'),
 	('refunded', 'Refunded'),
 )
+
+User = get_user_model()
 
 # Create your models here.
 
@@ -110,9 +115,11 @@ class Order(models.Model):
 		return False
 
 	def mark_paid(self):
-		if self.check_done:
-			self.status = 'paid'
-			self.save()
+		if self.status != 'paid':
+			if self.check_done:
+				self.status = 'paid'
+				self.save()
+				# iterate through products that were purchased
 		return self.status
 
 
@@ -146,3 +153,22 @@ def post_save_order(sender, instance, created, *args, **kwargs):
 		instance.update_total()
 
 post_save.connect(post_save_order, sender=Order)
+
+
+class ProductPurchaseManager(models.Manager):
+	def all(self):
+		return self.get_queryset().filter(refunded=False)
+
+
+class ProductPurchase(models.Model):
+	user 				= models.ForeignKey(User, blank=True, null=True)
+	billing_profile 	= models.ForeignKey(BillingProfile)
+	product 			= models.ForeignKey(Product)
+	Refunded 			= models.BooleanField(default=False)
+	updated 			= models.DateTimeField(auto_now=True)
+	timestamp 			= models.DateTimeField(auto_now_add=True)
+
+	objects = ProductPurchaseManager()
+
+	def __str__(self):
+		return self.product.title
