@@ -96,11 +96,16 @@ class Order(models.Model):
 		return new_total
 
 	def check_done(self):
+		shipping_address_required = not self.cart.is_digital
+		shipping_done = False
+		if not shipping_address_required or self.shipping_address:
+			shipping_done = True
+
+		print(shipping_done)
 		billing_profile = self.billing_profile
-		shipping_address = self.shipping_address
 		billing_address = self.billing_address
 		total = self.total
-		if billing_profile and shipping_address and billing_address and total > 0:
+		if billing_profile and shipping_done and billing_address and total > 0:
 			return True
 		return False
 
