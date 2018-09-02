@@ -1,5 +1,7 @@
 import os
 import random
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.db.models import Q
 from django.db.models.signals import pre_save, post_save
@@ -115,7 +117,9 @@ def upload_product_file_loc(instance, filename):
 
 class ProductFile(models.Model):
 	product 			= models.ForeignKey(Product)
-	file 				= models.FileField(upload_to=upload_product_file_loc)
+	file 				= models.FileField(
+								upload_to=upload_product_file_loc,
+								storage=FileSystemStorage(location=settings.PROTECTED_ROOT))
 
 	def __str__(self):
 		return self.file.name
