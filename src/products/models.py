@@ -128,8 +128,8 @@ class ProductFile(models.Model):
 	def __str__(self):
 		return self.file.name
 
-	def get_download_url(self):
-		return self.file.url
+	def get_download_url(self): # detail view
+		return reverse('products:download', kwargs={'slug': self.product.slug, 'pk': self.pk})
 
 	@property
 	def name(self):
