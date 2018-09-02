@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.db.models.signals import pre_save, post_save
 from django.urls import reverse
 
-from ecommerce.utils import unique_slug_generator
+from ecommerce.utils import unique_slug_generator, get_filename
 
 
 def get_filename_ext(filepath):
@@ -69,33 +69,37 @@ class ProductManager(models.Manager):
 
 # Create your models here.
 class Product(models.Model):
-    title 			= models.CharField(max_length=120)
-    slug 			= models.SlugField(blank=True, unique=True)
-    description 	= models.TextField()
-    price 			= models.DecimalField(decimal_places=2, max_digits=20, default=39.99)
-    image 			= models.ImageField(upload_to=upload_image_path, null=True, blank=True)
-    featured		= models.BooleanField(default=False)
-    active			= models.BooleanField(default=True)
-    timestamp 		= models.DateTimeField(auto_now_add=True)
-    is_digital		= models.BooleanField(default=False) # User Library
+	title 			= models.CharField(max_length=120)
+	slug 			= models.SlugField(blank=True, unique=True)
+	description 	= models.TextField()
+	price 			= models.DecimalField(decimal_places=2, max_digits=20, default=39.99)
+	image 			= models.ImageField(upload_to=upload_image_path, null=True, blank=True)
+	featured		= models.BooleanField(default=False)
+	active			= models.BooleanField(default=True)
+	timestamp 		= models.DateTimeField(auto_now_add=True)
+	is_digital		= models.BooleanField(default=False) # User Library
 
-    objects = ProductManager()
+	objects = ProductManager()
 
-    def get_absolute_url(self):
-    	#return "{slug}/".format(slug=self.slug)
-    	#return "/products/{slug}/".format(slug=self.slug)
-    	return reverse('products:detail', kwargs={'slug': self.slug})
+	def get_absolute_url(self):
+		#return "{slug}/".format(slug=self.slug)
+		#return "/products/{slug}/".format(slug=self.slug)
+		return reverse('products:detail', kwargs={'slug': self.slug})
 
-    def __str__(self):
-        return self.title
+	def __str__(self):
+		return self.title
 
-    def __unicode__(self):
-        return self.title
+	def __unicode__(self):
+		return self.title
 
-    @property
-    def name(self):
-    	return self.title
-    
+	@property
+	def name(self):
+		return self.title
+
+	def get_downloads(self):
+		qs = self.productfile_set.all()
+		return qs
+
 
 
 def product_pre_save_reciever(sender, instance, *args, **kwargs):
@@ -123,3 +127,11 @@ class ProductFile(models.Model):
 
 	def __str__(self):
 		return self.file.name
+
+	def get_download_url(self):
+		return self.file.url
+
+	@property
+	def name(self):
+		return get_filename(self.file.name)
+	
