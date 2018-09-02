@@ -164,16 +164,37 @@ def post_save_order(sender, instance, created, *args, **kwargs):
 post_save.connect(post_save_order, sender=Order)
 
 
+class ProductPurchaseQuerySet(models.query.QuerySet):
+	def active(self):
+		return self.filter(refunded=False)
+
+	def digital(self):
+		return self.filter(product__is_digital=True)
+
+	def by_request(self, request):
+		billing_profile, _ = BillingProfile.objects.new_or_get(request)
+		return self.filter(billing_profile=billing_profile)
+
+
 class ProductPurchaseManager(models.Manager):
+	def get_queryset(self):
+		return ProductPurchaseQuerySet(self.model, using=self._db)
+
 	def all(self):
-		return self.get_queryset().filter(refunded=False)
+		return self.get_queryset().active()
+
+	def digital(self):
+		return self.all().digital()
+
+	def by_request(self, request):
+		return self.get_queryset().by_request(request)
 
 
 class ProductPurchase(models.Model):
 	order_id 			= models.CharField(max_length=120)
 	billing_profile 	= models.ForeignKey(BillingProfile) # billingprofile.productpurchase_set.all()
 	product 			= models.ForeignKey(Product) # product.productpurchase_set.count()
-	Refunded 			= models.BooleanField(default=False)
+	refunded 			= models.BooleanField(default=False)
 	updated 			= models.DateTimeField(auto_now=True)
 	timestamp 			= models.DateTimeField(auto_now_add=True)
 

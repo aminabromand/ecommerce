@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.views.generic import ListView, DetailView
 
 from apps.billing.models import BillingProfile
-from .models import Order
+from .models import Order, ProductPurchase
 
 # Create your views here.
 
@@ -28,3 +28,9 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
 
 	def get_queryset(self):
 		return Order.objects.by_request(self.request).not_created()
+
+
+class LibraryView(LoginRequiredMixin, ListView):
+	template_name = 'orders/library.html'
+	def get_queryset(self):
+		return ProductPurchase.objects.by_request(self.request).digital()

@@ -8,6 +8,16 @@
 {% url 'account:home' as account_url %}
 {% url 'cart:home' as cart_url %}
 
+{% url 'orders:list' as order_list_url %}
+{% url 'billing-payment-method' as payment_method_url %}
+
+{% url 'account:user-update' as user_update_url %}
+{% url 'password_change' as pw_change_url %}
+{% url 'marketing-pref' as market_pref_url %}
+{% url 'library' as library_url %}
+
+{% url 'account:user-product-history' as product_hist_url %}
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
 
 	<div class='container'>
@@ -30,15 +40,17 @@
 
 
 	      {% if request.user.is_authenticated %}
-	      <li class="nav-item dropdown {% if request.path == account_url or request.path == about_url %}active{% endif %}">
+	      <li class="nav-item dropdown {% if request.path == account_url or request.path == about_url or request.path == contact_url or request.path == order_list_url or request.path == payment_method_url or request.path == user_update_url or request.path == pw_change_url or request.path == market_pref_url or request.path == library_url or request.path == product_hist_url %}active{% endif %}">
 	        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 	          Account
 	        </a>
 	        <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdown">
 	          <a class="dropdown-item {% if request.path == account_url %}active{% endif %}" href="{{ account_url }}">Home</a>
-	          <a class="dropdown-item {% if request.path == about_url %}active{% endif %}" href="{{ about_url }}">Billing</a>
-	          <a class="dropdown-item {% if request.path == about_url %}active{% endif %}" href="{{ about_url }}">Settings</a>
-	          <a class="dropdown-item {% if request.path == about_url %}active{% endif %}" href="{{ about_url }}">History</a>
+	          <a class="dropdown-item {% if request.path == about_url or request.path == contact_url %}active{% endif %}" href="{{ account_url }}#support">Support</a>
+	          <a class="dropdown-item {% if request.path == order_list_url or request.path == payment_method_url %}active{% endif %}" href="{{ account_url }}#billing">Billing</a>
+	          <a class="dropdown-item {% if request.path == user_update_url or request.path == pw_change_url or request.path == market_pref_url %}active{% endif %}" href="{{ account_url }}#settings">Account Details</a>
+	          <a class="dropdown-item {% if request.path == product_hist_url %}active{% endif %}" href="{{ product_hist_url }}">History</a>
+	          <a class="dropdown-item {% if request.path == library_url %}active{% endif %}" href="{{ library_url }}">Library</a>
 	          <div class="dropdown-divider"></div>
 	           <a class="dropdown-item" href="{{ logout_url }}">Logout</a>
 	        </div>
@@ -58,19 +70,6 @@
 	        	<span class='navbar-cart-count'>{{ request.session.cart_items }}</span>
 	        	<i class="fas fa-shopping-cart"></i>
 	        </a>
-	      </li>
-
-
-	      <li class="nav-item dropdown {% if request.path == contact_url or request.path == about_url %}active{% endif %}">
-	        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-	          Dropdown
-	        </a>
-	        <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdown">
-	          <a class="dropdown-item {% if request.path == contact_url %}active{% endif %}" href="{{ contact_url }}">Contact</a>
-	          <a class="dropdown-item {% if request.path == about_url %}active{% endif %}" href="{{ about_url }}">About</a>
-	          <div class="dropdown-divider"></div>
-	          <a class="dropdown-item" href="#">Something else here</a>
-	        </div>
 	      </li>
 
 
