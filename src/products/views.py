@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404, HttpResponse
 from django.views.generic import ListView, DetailView, View
@@ -94,16 +95,35 @@ import os
 from wsgiref.util import FileWrapper # this used in django
 from mimetypes import guess_type
 from django.conf import settings
+from apps.orders.models import ProductPurchase
 
 class ProductDownloadView(View):
-    def get(self, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         slug = kwargs.get('slug')
         pk = kwargs.get('pk')
         downloads_qs = ProductFile.objects.filter(pk=pk, product__slug=slug)
         if downloads_qs.count() != 1:
             raise Http404('Download not found')
         download_obj = downloads_qs.first()
+
         # permission checks
+        can_download = False
+        user_ready = True
+        if download_obj.user_required:
+            if not request.user.is_authenticated():
+                user_ready = False
+        purchased_products = Product.objects.none()
+        if download_obj.free:
+            can_download = True
+        else:
+            # not free
+            purchased_products = ProductPurchase.objects.products_by_request(request)
+            if download_obj.product in purchased_products:
+                can_download = True
+        if not can_download or not user_ready:
+            messages.error(request, 'You do not have access to download this item')
+            return redirect(download_obj.get_default_url())
+
         file_root = settings.PROTECTED_ROOT
         filepath = download_obj.file.path # .url /media/
         final_filepath = os.path.join(file_root, filepath) # where the file is stored
