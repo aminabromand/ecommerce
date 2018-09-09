@@ -109,6 +109,46 @@ $(document).ready(function() {
 
   // Cart + Add Products
   var productForm = $(".form-product-ajax"); // #form-product-ajax
+
+  function getOwnedProduct(productId, submitSpan) {
+    var actionEndpoint = '/orders/endpoint/verify/ownership/'
+    var httpMethod = 'GET'
+    var data = {
+      product_id: productId
+    }
+    var isOwner = false;
+    $.ajax({
+      url: actionEndpoint,
+      method: httpMethod,
+      data: data,
+      success: function(data){
+        console.log(data)
+        if (data.owner){
+          isOwner = true
+          submitSpan.html("<a class='btn btn-warning' href='/library/'>In Library</a>");
+        } else {
+          isOwner = false
+        }
+      },
+      error: function(error){
+        console.log(error)
+      }
+    });
+    return isOwner;
+  }
+
+  $.each(productForm, function(index, object) {
+    var $this = $(this);
+    var isUser = $this.attr("data-user");
+    var submitSpan = $this.find(".submit-span");
+    var productInput = $this.find("[name='product_id']");
+    var productId = productInput.attr("value");
+    var productIsDigital = productInput.attr("data-is-digital");
+    if (isUser && productIsDigital) {
+      var isOwned = getOwnedProduct(productId, submitSpan)
+    }
+  });
+
   productForm.submit(function(event) {
     event.preventDefault();
     console.log("Form is not sending");
@@ -130,7 +170,7 @@ $(document).ready(function() {
       success: function(data) {
         var submitSpan = thisForm.find(".submit-span");
         if (data.added) {
-          submitSpan.html("In cart <button type='submit' class='btn btn-link'>Remove?</button>");
+          submitSpan.html("<div class='btn-group'><a class='btn btn-link' href='/cart/'>In cart</a> <button type='submit' class='btn btn-link'>Remove?</button></div>");
         } else {
           submitSpan.html("<button class='btn btn-success'>Add to cart</button>");
         }
