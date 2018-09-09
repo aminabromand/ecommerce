@@ -39,7 +39,6 @@ def cart_detail_api_view(request):
 
 def cart_home(request):
 	cart_obj, new_obj = Cart.objects.new_or_get(request)
-
 	return render(request, 'carts/home.html', {'cart': cart_obj})
 
 
@@ -83,42 +82,20 @@ def checkout_home(request):
 	guest_form = GuestForm(request=request)
 	address_form = AddressForm()
 	billing_address_id = request.session.get('billing_address_id', None)
+
+	shipping_address_required = not cart_obj.is_digital
 	shipping_address_id = request.session.get('shipping_address_id', None)
-	# billing_address_form = AddressForm()
 
 	billing_profile, billing_profile_created = BillingProfile.objects.new_or_get(request)
-	# billing_profile = None
-	# user = request.user
-	# guest_email_id = request.session.get('guest_email_id')
-	# if user.is_authenticated():
-	# 	'''logged in user checkout; remember payment stuff'''
-	# 	if user.email:
-	# 		billing_profile, billing_profile_created = BillingProfile.objects.get_or_create(
-	# 														user=user, email=user.email)
-	# 	else:
-	# 		raise Exception('user has no email!')
-	# elif guest_email_id is not None:
-	# 	'''guest user checkout; auto reload payment stuff'''
-	# 	guest_email_obj = GuestEmail.objects.get(id=guest_email_id)
-	# 	billing_profile, billing_profile_created = BillingProfile.objects.get_or_create(
-	# 														email=guest_email_obj.email)
-	# else:
-	# 	pass
-	# 	# raise Exception('no user and no email provided!')
 
 	address_qs = None
 	has_card = False
 	if billing_profile is not None:
 		if request.user.is_authenticated():
 			address_qs = Address.objects.filter(billing_profile=billing_profile)
-		# shipping_address_qs 	= address_qs.filter(address_type='shipping')
-		# billing_address_qs 		= address_qs.filter(address_type='billing')
+
 		order_obj, order_obj_created = Order.objects.new_or_get(billing_profile, cart_obj)
-		# order_qs = Order.objects.filter(billing_profile=billing_profile, cart=cart_obj, active=True)
-		# if order_qs.count() == 1:
-		# 	order_obj = order_qs.first()
-		# else:
-		# 	order_obj = Order.objects.create(billing_profile=billing_profile, cart=cart_obj)
+
 		if shipping_address_id:
 			order_obj.shipping_address = Address.objects.get(id=shipping_address_id)
 			del request.session['shipping_address_id']
@@ -155,6 +132,7 @@ def checkout_home(request):
 		# 'billing_address_form': billing_address_form,
 		'has_card': has_card,
 		'publish_key': STRIPE_PUB_KEY,
+		'shipping_address_required': shipping_address_required,
 	}
 	return render(request, 'carts/checkout.html', context)
 
