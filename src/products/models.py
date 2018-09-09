@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.db.models.signals import pre_save, post_save
 from django.urls import reverse
 
+from ecommerce.aws.utils import ProtectedS3Storage
 from ecommerce.utils import unique_slug_generator, get_filename
 
 
@@ -110,20 +111,26 @@ pre_save.connect(product_pre_save_reciever, sender=Product)
 
 
 def upload_product_file_loc(instance, filename):
-	print(instance.id)
 	slug = instance.product.slug
+	id_ = instance.id
+	if id_ is None:
+		Klass = instance.__class__
+		qs = Klass.objects.all().order_by('-pk')
+		id_ = qs.first().id + 1
 	if not slug:
 		slug = unique_slug_generator(instance.product)
-	location = "products/{}/".format(slug)
+	location = "products/{slug}/{id}/".format(slug=slug, id=id_)
 	return location + filename # 'path/to/filename.mp4'
+
 
 
 
 class ProductFile(models.Model):
 	product 			= models.ForeignKey(Product)
 	file 				= models.FileField(
-								upload_to=upload_product_file_loc,
-								storage=FileSystemStorage(location=settings.PROTECTED_ROOT))
+									upload_to=upload_product_file_loc,
+									storage=ProtectedS3Storage() # FileSystemStorage(location=settings.PROTECTED_ROOT)
+								)
 	free 				= models.BooleanField(default=False) # purchase required
 	user_required 		= models.BooleanField(default=False) # user doesn't matter
 

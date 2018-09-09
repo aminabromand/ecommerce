@@ -110,22 +110,31 @@ $(document).ready(function() {
   // Cart + Add Products
   var productForm = $(".form-product-ajax"); // #form-product-ajax
 
-  function getOwnedProduct(productId) {
-    // $.ajax({
-    //   url: actionEndpoint,
-    //   method: httpMethod,
-    //   data: formData,
-    //   success: function(data){
-
-    //   },
-    //   error: function(){
-
-    //   }
-    // })
-    if (productId == 11) {
-      return true;
+  function getOwnedProduct(productId, submitSpan) {
+    var actionEndpoint = '/orders/endpoint/verify/ownership/'
+    var httpMethod = 'GET'
+    var data = {
+      product_id: productId
     }
-    return false;
+    var isOwner = false;
+    $.ajax({
+      url: actionEndpoint,
+      method: httpMethod,
+      data: data,
+      success: function(data){
+        console.log(data)
+        if (data.owner){
+          isOwner = true
+          submitSpan.html("<a class='btn btn-warning' href='/library/'>In Library</a>");
+        } else {
+          isOwner = false
+        }
+      },
+      error: function(error){
+        console.log(error)
+      }
+    });
+    return isOwner;
   }
 
   $.each(productForm, function(index, object) {
@@ -136,10 +145,7 @@ $(document).ready(function() {
     var productId = productInput.attr("value");
     var productIsDigital = productInput.attr("data-is-digital");
     if (isUser && productIsDigital) {
-      var isOwned = getOwnedProduct(productId)
-      if (isOwned) {
-        submitSpan.html("<a href='/library/'>In Library</a>");
-      }
+      var isOwned = getOwnedProduct(productId, submitSpan)
     }
   });
 
