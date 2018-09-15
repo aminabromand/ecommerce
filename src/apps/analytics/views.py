@@ -22,21 +22,14 @@ class SalesView(LoginRequiredMixin, TemplateView):
 		qs = Order.objects.all()
 		context['orders'] = qs
 		context['recent_orders'] = qs.recent().not_refunded()[:5]
+
 		# recent_orders_total = 0
 		# for i in context['recent_orders']:
 		# 	recent_orders_total += i.total
 		# print(recent_orders_total)
-		context['recent_orders_total'] = context['recent_orders'].aggregate(
-																		Sum('total'),
-																		Avg('total'),
-																		# Avg('cart__products__price')
-																		# Count('cart__products')
-																	)
 
-		# context['recent_cart_data'] = context['recent_orders'].aggregate(
-		# 																# Avg('cart__products__price')
-		# 																# Count('cart__products')
-		# 															)
+		context['recent_orders_data'] = context['recent_orders'].totals_data()
+		context['recent_cart_data'] = context['recent_orders'].cart_data()
 
 		# qs = Order.objects.all().annotate(product_avg=Avg('cart__products__price'), product_total = Sum('cart__products__price'), product__count = Count('cart__products'))
 		# >>> for i in qs:
@@ -45,5 +38,7 @@ class SalesView(LoginRequiredMixin, TemplateView):
 		# ...     print(i.product__count)
 
 		context['shipped_orders'] = qs.recent().not_refunded().by_status(status='shipped')[:5]
+		context['shipped_orders_data'] = context['shipped_orders'].totals_data()
 		context['paid_orders'] = qs.recent().not_refunded().by_status(status='paid')[:5]
+		context['paid_orders_data'] = context['paid_orders'].totals_data()
 		return context
