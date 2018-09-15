@@ -1,9 +1,11 @@
 import math
+import datetime
 from django.db import models
 from django.db.models import Count, Sum, Avg
 from django.db.models.signals import pre_save, post_save
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
+from django.utils import timezone
 
 from apps.addresses.models import Address
 from apps.billing.models import BillingProfile
@@ -27,6 +29,13 @@ class OrderManagerQuerySet(models.query.QuerySet):
 
 	def recent(self):
 		return self.order_by('-update', '-timestamp')
+
+	def by_date(self):
+		now = timezone.now() - datetime.timedelta(days=1)
+		print(now)
+		print('---')
+		print(now.day)
+		return self.filter(update__day__gte=now.day)
 
 	def totals_data(self):
 		return self.aggregate(Sum('total'), Avg('total'))
