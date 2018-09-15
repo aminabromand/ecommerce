@@ -10,9 +10,45 @@
 </div>
 <div class="row">
 	<div class="col-12 col-md-6 mx-auto">
-		
+		<p>Recent</p>
+		<ol>
+			{% for order in recent_orders %}
+				<li>
+					{{ order.order_id }}
+					{{ order.total }}
+					{{ order.update }}
+				</li>
+			{% endfor %}
+		</ol>
+	</div>
+	<div class="col-12 col-md-6 mx-auto">
+		<p>Shipped</p>
+		<ol>
+			
+			{% for order in shipped_orders %}
+				<li>
+					{{ order.order_id }}
+					{{ order.total }}
+					{{ order.update }}
+				</li>	
+			{% endfor %}
+			
+		</ol>
+	</div>
+	<div class="col-12 col-md-6 mx-auto">
+		<p>Paid</p>
+		<ol>
+			{% for order in paid_orders %}
+				<li>
+					{{ order.order_id }}
+					{{ order.total }}
+					{{ order.update }}
+				</li>
+			{% endfor %}
+		</ol>
 	</div>
 </div>
+
 
 
 {% endblock %}

@@ -23,6 +23,16 @@ User = get_user_model()
 # Create your models here.
 
 class OrderManagerQuerySet(models.query.QuerySet):
+
+	def recent(self):
+		return self.order_by('-update', '-timestamp')
+
+	def by_status(self, status='shipped'):
+		return self.filter(status=status)
+
+	def not_refunded(self):
+		return self.exclude(status='refunded')
+
 	def by_request(self, request):
 		billing_profile, _ = BillingProfile.objects.new_or_get(request)
 		return self.filter(billing_profile=billing_profile)
