@@ -35,6 +35,7 @@ from django.views.generic import TemplateView, RedirectView
 # from apps.accounts.views import # guest_register_view, login_page, register_page
 from apps.accounts.views import RegisterView, LoginView, GuestRegisterView
 from apps.addresses.views import checkout_address_create_view, checkout_address_reuse_view
+from apps.analytics.views import SalesView, SalesAjaxView
 from apps.billing.views import payment_method_view, payment_method_createview
 from apps.carts.views import cart_detail_api_view
 from apps.marketing.views import MarketingPreferenceUpdateView, MailchimpWebhookView
@@ -58,6 +59,9 @@ urlpatterns = [
     url(r'^account/', include("apps.accounts.urls", namespace='account')),
     # url(r'^accounts/', RedirectView.as_view(url='/account')),
     url(r'^accounts/', include("apps.accounts.passwords.urls")),
+
+    url(r'^analytics/sales/data/', SalesAjaxView.as_view(), name='sales-analytics-data'),
+    url(r'^analytics/sales/', SalesView.as_view(), name='sales-analytics'),
 
     url(r'^billing/payment-method/create/$', payment_method_createview, name='billing-payment-method-endpoint'),
     url(r'^billing/payment-method/$', payment_method_view, name='billing-payment-method'),

@@ -1,8 +1,11 @@
 import math
+import datetime
 from django.db import models
+from django.db.models import Count, Sum, Avg
 from django.db.models.signals import pre_save, post_save
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
+from django.utils import timezone
 
 from apps.addresses.models import Address
 from apps.billing.models import BillingProfile
@@ -23,6 +26,62 @@ User = get_user_model()
 # Create your models here.
 
 class OrderManagerQuerySet(models.query.QuerySet):
+
+	def recent(self):
+		return self.order_by('-update', '-timestamp')
+
+	def get_sales_breakdown(self):
+		recent = self.recent().not_refunded()
+		recent_data = recent.totals_data()
+		recent_cart_data = recent.cart_data()
+		shipped = recent.by_status(status='shipped')
+		shipped_data = shipped.totals_data()
+		paid = recent.by_status(status='paid')
+		paid_data = paid.totals_data()
+		data = {
+			'recent': recent,
+			'recent_data': recent_data,
+			'recent_cart_data': recent_cart_data,
+			'shipped': shipped,
+			'shipped_data': shipped_data,
+			'paid': paid,
+			'paid_data': paid_data,
+		}
+		return data
+
+	def by_weeks_range(self, weeks_ago=1, number_of_weeks=1):
+		if number_of_weeks > weeks_ago:
+			number_of_weeks = weeks_ago
+		days_ago_start = weeks_ago * 7 # 35
+		days_ago_end = days_ago_start - (number_of_weeks * 7) # 35 - 28 = 7
+		start_date = timezone.now() - datetime.timedelta(days=days_ago_start)
+		end_date = timezone.now() - datetime.timedelta(days=days_ago_end)
+		return self.by_range(start_date, end_date=end_date)
+
+	def by_range(self, start_date, end_date=None):
+		if end_date is None:
+			return self.filter(update__gte=start_date)
+		return self.filter(update__gte=start_date).filter(update__lte=end_date)
+
+	def by_date(self):
+		now = timezone.now() - datetime.timedelta(days=1)
+		return self.filter(update__day__gte=now.day)
+
+	def totals_data(self):
+		return self.aggregate(Sum('total'), Avg('total'))
+
+	def cart_data(self):
+		return self.aggregate(
+							Sum('cart__products__price'),
+							Avg('cart__products__price'),
+							Count('cart__products'))
+
+	def by_status(self, status='shipped'):
+		return self.filter(status=status)
+
+	def not_refunded(self):
+		return self.exclude(status='refunded')
+
 	def by_request(self, request):
 		billing_profile, _ = BillingProfile.objects.new_or_get(request)
 		return self.filter(billing_profile=billing_profile)
@@ -156,9 +215,9 @@ post_save.connect(post_save_cart_total, sender=Cart)
 
 
 def post_save_order(sender, instance, created, *args, **kwargs):
-	print('running')
+	print('models orders running')
 	if created:
-		print('updating... first')
+		print('models orders updating... first')
 		instance.update_total()
 
 post_save.connect(post_save_order, sender=Order)

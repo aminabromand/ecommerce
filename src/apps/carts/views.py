@@ -74,6 +74,9 @@ def cart_update(request):
 
 
 def checkout_home(request):
+
+	print('checkout_home_1')
+
 	cart_obj, cart_created = Cart.objects.new_or_get(request)
 	order_obj = None
 	if cart_created or cart_obj.products.count() == 0:
@@ -91,6 +94,9 @@ def checkout_home(request):
 	address_qs = None
 	has_card = False
 	if billing_profile is not None:
+
+		print('checkout_home_2')
+
 		if request.user.is_authenticated():
 			address_qs = Address.objects.filter(billing_profile=billing_profile)
 
@@ -107,6 +113,9 @@ def checkout_home(request):
 		has_card = billing_profile.has_card
 
 	if request.method == 'POST':
+
+		print('checkout_home_3')
+
 		# check that order is done
 		is_prepared = order_obj.check_done()
 		if is_prepared:
@@ -138,4 +147,5 @@ def checkout_home(request):
 
 
 def checkout_done_view(request):
+	print('success')
 	return render(request, 'carts/checkout-done.html', {})
