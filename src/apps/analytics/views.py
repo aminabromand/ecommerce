@@ -1,4 +1,5 @@
 import datetime
+import random
 from django.contrib.auth.mixins import LoginRequiredMixin
 #from django.db.models import Count, Sum, Avg
 from django.http import HttpResponse, JsonResponse
@@ -14,12 +15,37 @@ class SalesAjaxView(LoginRequiredMixin, View):
 	def get(self, request, *args, **kwargs):
 		data = {}
 		if request.user.is_staff:
+			qs = Order.objects.all().by_weeks_range(weeks_ago=5, number_of_weeks=5)
 			if request.GET.get('type') == 'week':
-				data['labels'] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-				data['data'] = [12, 19, 3, 5, 2, 3, 69]
+				days = 7
+				start_date = timezone.now().today() - datetime.timedelta(days=days-1)
+				datetime_list = []
+				labels = []
+				salesItems = []
+				for x in range(0, days):
+					new_time = start_date + datetime.timedelta(days=x)
+					datetime_list.append(
+								new_time
+							)
+					labels.append(
+								new_time.strftime('%a') # Mon
+							)
+					new_qs = qs.filter(update__day=new_time.day, update__month=new_time.month, update__year=new_time.year)
+					sales_total = new_qs.totals_data()['total__sum'] or 0
+					salesItems.append(
+								sales_total
+							)
+				data['labels'] = labels
+				data['data'] = salesItems
 			if request.GET.get('type') == '4weeks':
-				data['labels'] = ["Last week", "2 weeks ago", "3 weeks ago", "4 weeks ago"]
-				data['data'] = [12, 19, 3, 5]
+				data['labels'] = ["4 weeks ago", "3 weeks ago", "2 weeks ago", "Last week", "This week"]
+				current = 5
+				data['data'] = []
+				for i in range(0, 5):
+					new_qs = qs.by_weeks_range(weeks_ago=current, number_of_weeks=1)
+					sales_total = new_qs.totals_data()['total__sum'] or 0
+					data['data'].append(sales_total)
+					current -= 1
 		return JsonResponse(data)
 
 
