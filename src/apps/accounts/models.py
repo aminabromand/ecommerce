@@ -186,14 +186,21 @@ class EmailActivation(models.Model):
 				subject = '1-Click Email Verification'
 				from_email = settings.DEFAULT_FROM_EMAIL
 				recipient_list = [self.email]
-				sent_mail = send_mail(
-								subject,
-								txt_,
-								from_email,
-								recipient_list,
-								html_message=html_,
-								fail_silently=False
-							)
+				sent_mail = None
+				print("account.models: sending email...")
+				try:
+					sent_mail = send_mail(
+									subject,
+									txt_,
+									from_email,
+									recipient_list,
+									html_message=html_,
+									fail_silently=False
+								)
+				except Exception as e:
+					print("account.models: exception!")
+					print(e)
+				print("account.models: email sent")
 				return sent_mail
 		return False
 

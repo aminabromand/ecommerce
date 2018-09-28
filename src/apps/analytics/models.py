@@ -117,7 +117,7 @@ if FORCE_INACTIVE_USER_ENDSESSION:
 
 
 def user_logged_in_receiver(sender, instance, request, *args, **kwargs):
-	print(instance)
+	print("analytics.models: {0}".format(instance))
 	user = instance
 	ip_address = get_client_ip(request)
 	session_key = request.session.session_key # Django 1.11

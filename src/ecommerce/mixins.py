@@ -4,7 +4,7 @@ from django.utils.http import is_safe_url
 class RequestFormAttachMixin(object):
     def get_form_kwargs(self):
         kwargs = super(RequestFormAttachMixin, self).get_form_kwargs()
-        print(kwargs)
+        print("ecommerce.mixins: {0}".format(kwargs))
         kwargs['request'] = self.request
         return kwargs
 

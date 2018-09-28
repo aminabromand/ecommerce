@@ -75,7 +75,9 @@ class AccountEmailActivateView(FormMixin, View):
                 obj = EmailActivation.objects.email_exists(email).first()
                 user = obj.user
                 new_activation = EmailActivation.objects.create(user=user, email=email)
+                print("account.views: sending activation...")
                 new_activation.send_activation()
+                print("account.views: activation sent")
                 return super(AccountEmailActivateView, self).form_valid(form)
 
         def form_invalid(self, form):
