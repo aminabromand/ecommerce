@@ -124,23 +124,25 @@ class ProductDownloadView(View):
             messages.error(request, 'You do not have access to download this item')
             return redirect(download_obj.get_default_url())
 
-        aws_filepath = download_obj.generate_download_url()
-        print(aws_filepath)
-        return HttpResponseRedirect(aws_filepath)
-        # file_root = settings.PROTECTED_ROOT
-        # filepath = download_obj.file.path # .url /media/
-        # final_filepath = os.path.join(file_root, filepath) # where the file is stored
-        # with open(final_filepath, 'rb') as f:
-        #     wrapper = FileWrapper(f)
-        #     mimetype = 'application/force-download'
-        #     guessed_mimetype = guess_type(filepath)[0] # filename.mp4
-        #     if guessed_mimetype:
-        #         mimetype = guessed_mimetype
-        #     response = HttpResponse(wrapper, content_type=mimetype)
-        #     response['Content-Disposition'] = 'attachement;filename=%s' %(download_obj.name)
-        #     response['X-SendFile'] = str(download_obj.name)
-        #     return response
-        # return redirect(download_obj.get_default_url())
+        if settings.AWS_ON:
+            aws_filepath = download_obj.generate_download_url()
+            print(aws_filepath)
+            return HttpResponseRedirect(aws_filepath)
+
+        file_root = settings.PROTECTED_ROOT
+        filepath = download_obj.file.path # .url /media/
+        final_filepath = os.path.join(file_root, filepath) # where the file is stored
+        with open(final_filepath, 'rb') as f:
+            wrapper = FileWrapper(f)
+            mimetype = 'application/force-download'
+            guessed_mimetype = guess_type(filepath)[0] # filename.mp4
+            if guessed_mimetype:
+                mimetype = guessed_mimetype
+            response = HttpResponse(wrapper, content_type=mimetype)
+            response['Content-Disposition'] = 'attachement;filename=%s' %(download_obj.display_name)
+            response['X-SendFile'] = str(download_obj.display_name)
+            return response
+        return redirect(download_obj.get_default_url())
 
 
 class ProductDetailView(ObjectViewedMixin, DetailView):

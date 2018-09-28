@@ -3,11 +3,13 @@ import os
 import random
 import string
 
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
 from django.utils import timezone
 from django.utils.text import slugify
 
 
-
+ProtectedLocalStorage  = lambda: FileSystemStorage(location=settings.PROTECTED_ROOT)
 
 
 def get_last_month_data(today):

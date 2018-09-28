@@ -9,7 +9,7 @@ from django.urls import reverse
 
 from ecommerce.aws.download.utils import AWSDownload
 from ecommerce.aws.utils import ProtectedS3Storage
-from ecommerce.utils import unique_slug_generator, get_filename
+from ecommerce.utils import unique_slug_generator, get_filename, ProtectedLocalStorage
 
 
 def get_filename_ext(filepath):
@@ -127,6 +127,10 @@ def upload_product_file_loc(instance, filename):
 	return location + filename # 'path/to/filename.mp4'
 
 
+if settings.AWS_ON:
+	ProtectedStorage = ProtectedS3Storage
+else:
+	ProtectedStorage = ProtectedLocalStorage
 
 
 class ProductFile(models.Model):
@@ -134,7 +138,7 @@ class ProductFile(models.Model):
 	name 				= models.CharField(max_length=120, null=True, blank=True)
 	file 				= models.FileField(
 									upload_to=upload_product_file_loc,
-									storage=ProtectedS3Storage() # FileSystemStorage(location=settings.PROTECTED_ROOT)
+									storage=ProtectedStorage() # ProtectedS3Storage() # FileSystemStorage(location=settings.PROTECTED_ROOT)
 								)
 	free 				= models.BooleanField(default=False) # purchase required
 	user_required 		= models.BooleanField(default=False) # user doesn't matter
